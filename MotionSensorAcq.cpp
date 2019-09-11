@@ -1,9 +1,7 @@
 #include "MotionSensorAcq.h"
 
-PS2Mouse mouse(6, 5); //clk, data
-PS2Mouse mouse2(3, 2); //clk data for mouse 2
-
-//void toVector(int x, int y, int posz);
+PS2Mouse mouse(clockMouse1Pin, dataMouse1Pin); //clk, data
+PS2Mouse mouse2(clockMouse2Pin, dataMouse2Pin); //clk data for mouse 2 (defined in main)
 
 float posx = 0;
 float posy = 0;
@@ -52,7 +50,7 @@ void motionSensorAcq(int *motionArray) {
     }*/
   posx = previousx + (float)x;
   posy = previousy + (float)y;
-
+/*
   Serial.print(posx);
   Serial.print(" ");
   Serial.print(-posy);
@@ -60,7 +58,7 @@ void motionSensorAcq(int *motionArray) {
   Serial.print(posz);
   Serial.print(" ");
   Serial.println("end");
-
+*/
   motionArray[0] = posx;
   motionArray[1] = -posy;
   motionArray[2] = posz;

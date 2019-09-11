@@ -10,6 +10,11 @@
   5 : CLK
 */
 
+extern int clockMouse1Pin;
+extern int dataMouse1Pin;
+extern int clockMouse2Pin;
+extern int dataMouse2Pin;
+
 //representation : mouse moves x and y from normal view -> 2D polar coordinates (r = sqrt(x�+y�), theta = atan(y/x))
 // mouse turns around = phi -> angular offset of polar in its reference
 

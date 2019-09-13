@@ -8,9 +8,46 @@
 
 //#define _DEBUG_ // debug conditional compiling
 
+
+/*TO ADD A NEW DATA:
+ * add the corresponding pin in the code: 
+ *    int myDataPin = "my pin number"
+ *
+ * add an acquisition value variable
+ *    int myDataValue;
+ *    
+ * add an I2C array to transmit this value.
+ * This array should have the size of the number of characters you want to send +1.
+ * i.e. to send 327, the array size is 4, because each char is one byte and we want to transmit bytes.
+ *    int myDataI2cArray["my required size"];
+ *    
+ * add the pinMode in Setup()
+ *    pinMode(myDataPin, INPUT);
+ *    
+ * in the acquisition part (dataAcquisition() function)
+ * add your data reading
+ *  if it is a digital value:
+ *    myDataValue = digitalRead(myDataPin)
+ *    
+ *  if it is an analog value:
+ *    myDataValue = digitalRead(myDataPin);
+ *    
+ *    
+ * add the value in plot:
+ *     Serial.print("yourData: "); Serial.print(yourData); Serial.print(" ");
+ *   Make sure that the last line of ArduinoPlotting is Serial.print(\n");
+ *   
+ * add the data in the bytes conversion function i2cDataTransform
+ *    ((String)myDataValue).toCharArray(myDataI2cArray, my array size);
+ *     
+ * add the i2C communication line inbetween Wire.beginTransmission(0x00); and Wire.endTransmission();
+ *    Wire.write(myDataI2cArray); Wire.write(" ");
+  */
+
 // ===============================
 // =====         GPIO         ====
 // ===============================
+
 //motionSensor
 int clockMouse1Pin = 6;
 int dataMouse1Pin = 5;
@@ -27,7 +64,7 @@ int lickValveActivationPin = 9;
 int lickAirValveActivationPin = 10;
 
 //strain gauge
-int strainGaugePin = 0;
+int strainGaugePin = A0;
 
 //camera trigger and stimulus
 int cameraTriggerPin = 15; //
@@ -71,6 +108,10 @@ void setup() {
   pinMode(cameraTriggerPin, INPUT);
   pinMode(stimulusPin, INPUT);
   pinMode(thermRespirationPin, INPUT);
+  pinMode(lickPin, INPUT);
+  pinMode(lickValveActivationPin, INPUT);
+  pinMode(lickAirValveActivationPin, INPUT);
+  pinMode(strainGaugePin, INPUT);
   Wire.begin();
   Serial.begin(500000);
   motionSensorSetup();
@@ -132,7 +173,7 @@ void i2cCommunication() {
   Wire.write(motionZI2cArray); Wire.write(" ");
   Wire.write(thermRespI2cArray); Wire.write(" ");
   Wire.write(lickValueI2cArray); Wire.write(" ");
-  Wire.write(lickValveActivationI2cArray);
+  Wire.write(lickValveActivationI2cArray); Wire.write(" ");
   i2cError = Wire.endTransmission();
 }
 

@@ -185,11 +185,11 @@ void ArduinoPlot() {
   Serial.print("motionY: "); Serial.print(-motionSensorValuesArray[1]); Serial.print(" "); //note the negative
   Serial.print("motionZ: "); Serial.print(motionSensorValuesArray[2]); Serial.print(" ");
   Serial.print("termResp: "); Serial.print(thermRespValue); Serial.print(" ");
-  Serial.print("lickValue: "); Serial.print(lickValue); Serial.print(" ");
-  Serial.print("lickValveActivationValue: "); Serial.print(lickValveActivationValue); Serial.print(" ");
-  Serial.print("lickAirValveActivationValue: "); Serial.print(lickAirValveActivationValue); Serial.print(" ");
-  Serial.print("cameraTriggerValue: "); Serial.print(cameraTriggerValue); Serial.print(" ");
-  Serial.print("stimulusValue: "); Serial.print(stimulusValue); Serial.print(" ");
+  Serial.print("lickValue: "); Serial.print(lickValue *5000); Serial.print(" ");
+  Serial.print("lickValveActivationValue: "); Serial.print(lickValveActivationValue *5000); Serial.print(" ");
+  Serial.print("lickAirValveActivationValue: "); Serial.print(lickAirValveActivationValue *5000); Serial.print(" ");
+  Serial.print("cameraTriggerValue: "); Serial.print(cameraTriggerValue *5000); Serial.print(" ");
+  Serial.print("stimulusValue: "); Serial.print(stimulusValue *5000); Serial.print(" ");
   Serial.print("strainGaugeValue: "); Serial.print(strainGaugeValue); Serial.print(" ");
 
   Serial.print("\n"); //required to plot each time

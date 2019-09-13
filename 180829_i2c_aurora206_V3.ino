@@ -7,42 +7,43 @@
 #include <Wire.h>
 
 //#define _DEBUG_ // debug conditional compiling
+//#define MOTION_SENSOR //conditional compiling if using optical mice
 
 
 /*TO ADD A NEW DATA:
- * add the corresponding pin in the code: 
- *    int myDataPin = "my pin number"
- *
- * add an acquisition value variable
- *    int myDataValue;
- *    
- * add an I2C array to transmit this value.
- * This array should have the size of the number of characters you want to send +1.
- * i.e. to send 327, the array size is 4, because each char is one byte and we want to transmit bytes.
- *    int myDataI2cArray["my required size"];
- *    
- * add the pinMode in Setup()
- *    pinMode(myDataPin, INPUT);
- *    
- * in the acquisition part (dataAcquisition() function)
- * add your data reading
- *  if it is a digital value:
- *    myDataValue = digitalRead(myDataPin)
- *    
- *  if it is an analog value:
- *    myDataValue = analogRead(myDataPin);
- *    
- *    
- * add the value in plot:
- *     Serial.print("yourData: "); Serial.print(yourData); Serial.print(" ");
- *   Make sure that the last line of ArduinoPlotting is Serial.print(\n");
- *   
- * add the data in the bytes conversion function i2cDataTransform
- *    ((String)myDataValue).toCharArray(myDataI2cArray, my array size);
- *     
- * add the i2C communication line inbetween Wire.beginTransmission(0x00); and Wire.endTransmission();
- *    Wire.write(myDataI2cArray); Wire.write(" ");
-  */
+   add the corresponding pin in the code:
+      int myDataPin = "my pin number"
+
+   add an acquisition value variable
+      int myDataValue;
+
+   add an I2C array to transmit this value.
+   This array should have the size of the number of characters you want to send +1.
+   i.e. to send 327, the array size is 4, because each char is one byte and we want to transmit bytes.
+      int myDataI2cArray["my required size"];
+
+   add the pinMode in Setup()
+      pinMode(myDataPin, INPUT);
+
+   in the acquisition part (dataAcquisition() function)
+   add your data reading
+    if it is a digital value:
+      myDataValue = digitalRead(myDataPin)
+
+    if it is an analog value:
+      myDataValue = analogRead(myDataPin);
+
+
+   add the value in plot:
+       Serial.print("yourData: "); Serial.print(yourData); Serial.print(" ");
+     Make sure that the last line of ArduinoPlotting is Serial.print(\n");
+
+   add the data in the bytes conversion function i2cDataTransform
+      ((String)myDataValue).toCharArray(myDataI2cArray, my array size);
+
+   add the i2C communication line inbetween Wire.beginTransmission(0x00); and Wire.endTransmission();
+      Wire.write(myDataI2cArray); Wire.write(" ");
+*/
 
 // ===============================
 // =====         GPIO         ====
@@ -73,7 +74,7 @@ int stimulusPin = 16; //aurora 206 final valve
 // ===============================
 // =====  Acquistion Values   ====
 // ===============================
-int motionSensorValuesArray[3];
+int motionSensorValuesArray[3] = {0};
 int thermRespValue;
 int lickValue;
 int lickValveActivationValue;
@@ -114,7 +115,9 @@ void setup() {
   pinMode(strainGaugePin, INPUT);
   Wire.begin();
   Serial.begin(500000);
+#ifdef MOTION_SENSOR
   motionSensorSetup();
+#endif
 }
 
 void loop() {
@@ -185,11 +188,11 @@ void ArduinoPlot() {
   Serial.print("motionY: "); Serial.print(-motionSensorValuesArray[1]); Serial.print(" "); //note the negative
   Serial.print("motionZ: "); Serial.print(motionSensorValuesArray[2]); Serial.print(" ");
   Serial.print("termResp: "); Serial.print(thermRespValue); Serial.print(" ");
-  Serial.print("lickValue: "); Serial.print(lickValue *5000); Serial.print(" ");
-  Serial.print("lickValveActivationValue: "); Serial.print(lickValveActivationValue *5000); Serial.print(" ");
-  Serial.print("lickAirValveActivationValue: "); Serial.print(lickAirValveActivationValue *5000); Serial.print(" ");
-  Serial.print("cameraTriggerValue: "); Serial.print(cameraTriggerValue *5000); Serial.print(" ");
-  Serial.print("stimulusValue: "); Serial.print(stimulusValue *5000); Serial.print(" ");
+  Serial.print("lickValue: "); Serial.print(lickValue * 5000); Serial.print(" ");
+  Serial.print("lickValveActivationValue: "); Serial.print(lickValveActivationValue * 5000); Serial.print(" ");
+  Serial.print("lickAirValveActivationValue: "); Serial.print(lickAirValveActivationValue * 5000); Serial.print(" ");
+  Serial.print("cameraTriggerValue: "); Serial.print(cameraTriggerValue * 5000); Serial.print(" ");
+  Serial.print("stimulusValue: "); Serial.print(stimulusValue * 5000); Serial.print(" ");
   Serial.print("strainGaugeValue: "); Serial.print(strainGaugeValue); Serial.print(" ");
 
   Serial.print("\n"); //required to plot each time
@@ -199,7 +202,9 @@ void ArduinoPlot() {
 // =====     Acquisition      ====
 // ===============================
 void dataAcquisition() {
+#ifdef MOTION_SENSOR
   motionSensorAcq(&motionSensorValuesArray[0]);
+#endif
   thermRespValue = analogRead(thermRespirationPin);
   lickValue = digitalRead(lickPin);
   lickValveActivationValue = digitalRead(lickValveActivationPin);

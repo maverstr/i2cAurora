@@ -30,7 +30,7 @@
  *    myDataValue = digitalRead(myDataPin)
  *    
  *  if it is an analog value:
- *    myDataValue = digitalRead(myDataPin);
+ *    myDataValue = analogRead(myDataPin);
  *    
  *    
  * add the value in plot:

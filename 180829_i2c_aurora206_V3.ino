@@ -1,4 +1,4 @@
-// /!\ OVERWRITE cameraTriggerValue so constant i2c communication without trigger
+// /!\ OVERWRITE cameraTriggerValue for constant i2c communication without trigger
 //SCB-19: red: SDA   black: SCL
 //arduino: red: A4   black: A5
 //mega : data: 20, clock : 21

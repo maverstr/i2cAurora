@@ -64,8 +64,8 @@ int lickPin = 8;
 int lickValveActivationPin = 9;
 int lickAirValveActivationPin = 10;
 
-//strain gauge
-int strainGaugePin = A0;
+//strain gaugea1
+int strainGaugePin = A4;
 
 //camera trigger and stimulus
 int cameraTriggerPin = 15; //
@@ -114,6 +114,7 @@ void setup() {
   pinMode(lickAirValveActivationPin, INPUT);
   pinMode(strainGaugePin, INPUT);
   Wire.begin();
+  Wire.setClock(400000); //400kHz i2C freq
   Serial.begin(500000);
 #ifdef MOTION_SENSOR
   motionSensorSetup();

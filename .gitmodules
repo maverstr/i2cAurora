@@ -1,0 +1,3 @@
+[submodule "UserGuide-SynchronizationAurora"]
+	path = UserGuide-SynchronizationAurora
+	url = https://github.com/maverstr/UserGuide-SynchronizationAurora

@@ -15,7 +15,7 @@ float previousz = posz;
 
 float vector[2];
 
-int x, y, x2, z;
+int x, y, z, z2;
 
 bool rotation = true;
 bool polar = false;
@@ -35,19 +35,18 @@ void motionSensorAcq(int *motionArray) {
 
   uint8_t stat, stat2;
   mouse.getPosition(stat, x, z);
-  mouse2.getPosition(stat2, y, x2);
+  mouse2.getPosition(stat2, y, z2);
 
   previousx = posx;
   previousy = posy;
   previousz = posz;
 
   posz = previousz + (float)z;
-  /*
     if (rotation) {
       toVector(x, y, posz); //rotation of x and y depending on z reference
       x = vector[0];
       y = vector[1];
-    }*/
+    }
   posx = previousx + (float)x;
   posy = previousy + (float)y;
 /*

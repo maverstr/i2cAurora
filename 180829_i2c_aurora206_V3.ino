@@ -7,7 +7,7 @@
 #include <Wire.h>
 
 //#define _DEBUG_ // debug conditional compiling
-//#define MOTION_SENSOR //conditional compiling if using optical mice
+#define MOTION_SENSOR //conditional compiling if using optical mice
 
 
 /*TO ADD A NEW DATA:
@@ -106,13 +106,13 @@ char lickAirValveActivationI2cArray[2];
 
 // the setup routine runs once when you press reset:
 void setup() {
-  pinMode(cameraTriggerPin, INPUT);
-  pinMode(stimulusPin, INPUT);
-  pinMode(thermRespirationPin, INPUT);
-  pinMode(lickPin, INPUT);
-  pinMode(lickValveActivationPin, INPUT);
-  pinMode(lickAirValveActivationPin, INPUT);
-  pinMode(strainGaugePin, INPUT);
+  pinMode(cameraTriggerPin, INPUT_PULLUP);
+  pinMode(stimulusPin, INPUT_PULLUP);
+  pinMode(thermRespirationPin, INPUT_PULLUP);
+  pinMode(lickPin, INPUT_PULLUP);
+  pinMode(lickValveActivationPin, INPUT_PULLUP);
+  pinMode(lickAirValveActivationPin, INPUT_PULLUP);
+  pinMode(strainGaugePin, INPUT_PULLUP);
   Wire.begin();
   Wire.setClock(400000); //400kHz i2C freq
   Serial.begin(500000);
@@ -157,7 +157,7 @@ void loop() {
 void i2cDataTransform() {
   ((String)strainGaugeValue).toCharArray(strainGaugeI2cArray, 5);
   ((String)cameraTriggerValue).toCharArray(strainGaugeI2cArray, 2);
-  ((String)stimulusValue).toCharArray(strainGaugeI2cArray, 2);
+  ((String)stimulusValue).toCharArray(stimulusI2cArray, 2);
   ((String)motionSensorValuesArray[0]).toCharArray(motionXI2cArray, 8);
   ((String)motionSensorValuesArray[1]).toCharArray(motionYI2cArray, 8);
   ((String)motionSensorValuesArray[2]).toCharArray(motionZI2cArray, 8);
@@ -171,7 +171,7 @@ void i2cCommunication() {
   Wire.beginTransmission(0x00); // transmits to device with address 0
   Wire.write(strainGaugeI2cArray); Wire.write(" "); // sends strain gauge value
   Wire.write(cameraTriggerI2cArray); Wire.write(" ");// sends trigger, should be always 1
-  Wire.write(strainGaugeI2cArray); Wire.write(" "); // sends final valve
+  Wire.write(stimulusI2cArray); Wire.write(" "); // sends final valve
   Wire.write(motionXI2cArray); Wire.write(" ");
   Wire.write(motionYI2cArray); Wire.write(" ");
   Wire.write(motionZI2cArray); Wire.write(" ");
@@ -207,6 +207,7 @@ void dataAcquisition() {
   motionSensorAcq(&motionSensorValuesArray[0]);
 #endif
   thermRespValue = analogRead(thermRespirationPin);
+  thermRespValue *= (5000/1023.0);
   lickValue = digitalRead(lickPin);
   lickValveActivationValue = digitalRead(lickValveActivationPin);
   lickAirValveActivationValue = digitalRead(lickAirValveActivationPin);

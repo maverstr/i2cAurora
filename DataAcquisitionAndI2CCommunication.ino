@@ -3,11 +3,14 @@
 //arduino: red: A4   black: A5
 //mega : data: 20, clock : 21
 
+//COMMENT MOTION_SENSOR IF NOT USING THE OPTICAL MICE
+//COMMENT _DEBUG_ IF NOT DEBUGGING
+
 #include "Arduino.h"
 #include <Wire.h>
 
-#define _DEBUG_ // debug conditional compiling
-//#define MOTION_SENSOR //conditional compiling if using optical mice
+//#define _DEBUG_ // debug conditional compiling
+//#define MOTION_SENSOR //conditional compiling if using optical mice. COMMENT IF NOT USING THE MICE
 
 
 /*TO ADD A NEW DATA:
@@ -116,7 +119,7 @@ void setup() {
   pinMode(lickDrainValveActivationPin, INPUT_PULLUP);
   pinMode(strainGaugePin, INPUT_PULLUP);
   Wire.begin();
-  Wire.setClock(400000); //400kHz i2C freq
+  //Wire.setClock(400000); //400kHz i2C freq change. must be left to default (100kHz) for scanImage to handle the data!
   Serial.begin(500000);
 #ifdef MOTION_SENSOR
   motionSensorSetup();
@@ -131,7 +134,7 @@ void loop() {
   ////////////////////////////////////////////////////////////////////
   /*OVERWRITE cameraTriggerValue so constant i2c communication without trigger*/
   ////////////////////////////////////////////////////////////////////
-  cameraTriggerValue = 1;
+  //cameraTriggerValue = 1;
 
   if (cameraTriggerValue == 1) {
 #ifdef _DEBUG_

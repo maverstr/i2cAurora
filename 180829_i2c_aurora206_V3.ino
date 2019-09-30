@@ -6,8 +6,8 @@
 #include "Arduino.h"
 #include <Wire.h>
 
-//#define _DEBUG_ // debug conditional compiling
-#define MOTION_SENSOR //conditional compiling if using optical mice
+#define _DEBUG_ // debug conditional compiling
+//#define MOTION_SENSOR //conditional compiling if using optical mice
 
 
 /*TO ADD A NEW DATA:
@@ -62,7 +62,7 @@ int thermRespirationPin = A5;
 //Lick sensor
 int lickPin = 8;
 int lickValveActivationPin = 9;
-int lickAirValveActivationPin = 10;
+int lickDrainValveActivationPin = 10;
 
 //strain gaugea1
 int strainGaugePin = A4;
@@ -78,7 +78,7 @@ int motionSensorValuesArray[3] = {0};
 int thermRespValue;
 int lickValue;
 int lickValveActivationValue;
-int lickAirValveActivationValue;
+int lickDrainValveActivationValue;
 int strainGaugeValue;
 int cameraTriggerValue; // == 1 when triggered
 int stimulusValue;
@@ -98,20 +98,22 @@ char motionXI2cArray[8];
 char motionYI2cArray[8];
 char motionZI2cArray[8];
 //therm resp
-char thermRespI2cArray[4];
+char thermRespI2cArray[5];
 //lick sensor
 char lickValueI2cArray[2];
 char lickValveActivationI2cArray[2];
-char lickAirValveActivationI2cArray[2];
+char lickDrainValveActivationI2cArray[2];
 
 // the setup routine runs once when you press reset:
 void setup() {
+  pinMode(20, INPUT_PULLUP);
+  pinMode(21, INPUT_PULLUP); //sets i2C bus with internal pullup
   pinMode(cameraTriggerPin, INPUT_PULLUP);
   pinMode(stimulusPin, INPUT_PULLUP);
   pinMode(thermRespirationPin, INPUT_PULLUP);
   pinMode(lickPin, INPUT_PULLUP);
   pinMode(lickValveActivationPin, INPUT_PULLUP);
-  pinMode(lickAirValveActivationPin, INPUT_PULLUP);
+  pinMode(lickDrainValveActivationPin, INPUT_PULLUP);
   pinMode(strainGaugePin, INPUT_PULLUP);
   Wire.begin();
   Wire.setClock(400000); //400kHz i2C freq
@@ -129,7 +131,7 @@ void loop() {
   ////////////////////////////////////////////////////////////////////
   /*OVERWRITE cameraTriggerValue so constant i2c communication without trigger*/
   ////////////////////////////////////////////////////////////////////
-  //cameraTriggerValue=1;
+  cameraTriggerValue = 1;
 
   if (cameraTriggerValue == 1) {
 #ifdef _DEBUG_
@@ -156,15 +158,15 @@ void loop() {
 // ===============================
 void i2cDataTransform() {
   ((String)strainGaugeValue).toCharArray(strainGaugeI2cArray, 5);
-  ((String)cameraTriggerValue).toCharArray(strainGaugeI2cArray, 2);
+  ((String)cameraTriggerValue).toCharArray(cameraTriggerI2cArray, 2);
   ((String)stimulusValue).toCharArray(stimulusI2cArray, 2);
   ((String)motionSensorValuesArray[0]).toCharArray(motionXI2cArray, 8);
   ((String)motionSensorValuesArray[1]).toCharArray(motionYI2cArray, 8);
   ((String)motionSensorValuesArray[2]).toCharArray(motionZI2cArray, 8);
-  ((String)thermRespValue).toCharArray(thermRespI2cArray, 4);
+  ((String)thermRespValue).toCharArray(thermRespI2cArray, 5);
   ((String)lickValue).toCharArray(lickValueI2cArray, 2);
   ((String)lickValveActivationValue).toCharArray(lickValveActivationI2cArray, 2);
-  ((String)lickAirValveActivationValue).toCharArray(lickAirValveActivationI2cArray, 2);
+  ((String)lickDrainValveActivationValue).toCharArray(lickDrainValveActivationI2cArray, 2);
 }
 
 void i2cCommunication() {
@@ -178,6 +180,7 @@ void i2cCommunication() {
   Wire.write(thermRespI2cArray); Wire.write(" ");
   Wire.write(lickValueI2cArray); Wire.write(" ");
   Wire.write(lickValveActivationI2cArray); Wire.write(" ");
+  Wire.write(lickDrainValveActivationI2cArray); Wire.write(" ");
   i2cError = Wire.endTransmission();
 }
 
@@ -191,7 +194,7 @@ void ArduinoPlot() {
   Serial.print("termResp: "); Serial.print(thermRespValue); Serial.print(" ");
   Serial.print("lickValue: "); Serial.print(lickValue * 5000); Serial.print(" ");
   Serial.print("lickValveActivationValue: "); Serial.print(lickValveActivationValue * 5000); Serial.print(" ");
-  Serial.print("lickAirValveActivationValue: "); Serial.print(lickAirValveActivationValue * 5000); Serial.print(" ");
+  Serial.print("lickDrainValveActivationValue: "); Serial.print(lickDrainValveActivationValue * 5000); Serial.print(" ");
   Serial.print("cameraTriggerValue: "); Serial.print(cameraTriggerValue * 5000); Serial.print(" ");
   Serial.print("stimulusValue: "); Serial.print(stimulusValue * 5000); Serial.print(" ");
   Serial.print("strainGaugeValue: "); Serial.print(strainGaugeValue); Serial.print(" ");
@@ -207,10 +210,10 @@ void dataAcquisition() {
   motionSensorAcq(&motionSensorValuesArray[0]);
 #endif
   thermRespValue = analogRead(thermRespirationPin);
-  thermRespValue *= (5000/1023.0);
+  thermRespValue *= (5000 / 1023.0);
   lickValue = digitalRead(lickPin);
   lickValveActivationValue = digitalRead(lickValveActivationPin);
-  lickAirValveActivationValue = digitalRead(lickAirValveActivationPin);
+  lickDrainValveActivationValue = digitalRead(lickDrainValveActivationPin);
   cameraTriggerValue = digitalRead(cameraTriggerPin);
   stimulusValue = digitalRead(stimulusPin);
   strainGaugeValue = analogRead(strainGaugePin);
